@@ -50,14 +50,15 @@ class _ReservationPageState extends State<ReservationPage> {
   late GlobalKey<FormState> emailFormKey;
   late TextEditingController emailController;
 
-  late GlobalKey<FormState> touristFormKey;
-  late TextEditingController nameController;
-  late TextEditingController surnameController;
-  late TextEditingController birthdayController;
-  late TextEditingController citizenshipController;
-  late TextEditingController numberOfInternationalPasswordController;
-  late TextEditingController
-      internationalPasswordValidityPeriodController;
+  List<GlobalKey<FormState>> touristFormKey = [];
+  List<TextEditingController> nameController = [];
+  List<TextEditingController> surnameController = [];
+  List<TextEditingController> birthdayController = [];
+  List<TextEditingController> citizenshipController = [];
+  List<TextEditingController>
+      numberOfInternationalPasswordController = [];
+  List<TextEditingController>
+      internationalPasswordValidityPeriodController = [];
 
   @override
   void initState() {
@@ -68,26 +69,33 @@ class _ReservationPageState extends State<ReservationPage> {
     emailController = TextEditingController();
     emailFormKey = GlobalKey<FormState>();
 
-    touristFormKey = GlobalKey<FormState>();
-    nameController = TextEditingController();
-    surnameController = TextEditingController();
-    birthdayController = TextEditingController();
-    citizenshipController = TextEditingController();
-    numberOfInternationalPasswordController = TextEditingController();
-    internationalPasswordValidityPeriodController =
-        TextEditingController();
+    touristFormKey = [GlobalKey<FormState>()];
+    nameController = [TextEditingController()];
+    surnameController = [TextEditingController()];
+    birthdayController = [TextEditingController()];
+    citizenshipController = [TextEditingController()];
+    numberOfInternationalPasswordController = [
+      TextEditingController()
+    ];
+    internationalPasswordValidityPeriodController = [
+      TextEditingController()
+    ];
   }
 
   @override
   void dispose() {
     telephoneController.dispose();
     emailController.dispose();
-    nameController.dispose();
-    surnameController.dispose();
-    birthdayController.dispose();
-    citizenshipController.dispose();
-    numberOfInternationalPasswordController.dispose();
-    internationalPasswordValidityPeriodController.dispose();
+
+    for (int i = 0; i < touristFormKey.length; i++) {
+      nameController[i].dispose();
+      surnameController[i].dispose();
+      birthdayController[i].dispose();
+      citizenshipController[i].dispose();
+      numberOfInternationalPasswordController[i].dispose();
+      internationalPasswordValidityPeriodController[i].dispose();
+    }
+
     super.dispose();
   }
 
@@ -159,30 +167,42 @@ class _ReservationPageState extends State<ReservationPage> {
                       autoValidation: true,
                     ),
                     const SizedBox(height: 4),
-                    _ConcerningNumberAndEmail(
+                    const _ConcerningNumberAndEmail(
                         'Эти данные никому не передаются. После оплаты мы вышлем чек на указанный Вами номер и почту'),
-                    const SizedBox(height: 16),
-                    const GreyStripe(),
-                    const SizedBox(height: 16),
-                    const _HeaderWithIconButton(
-                        text: 'Первый турист',
-                        iconPath: 'assets/icons/collapse.svg'),
-                    const SizedBox(height: 16),
-                    _TouristForm(
-                        specialKey: touristFormKey,
-                        nameController: nameController,
-                        surnameController: surnameController,
-                        birthdayController: birthdayController,
-                        citizenshipController: citizenshipController,
-                        numberOfInternationalPasswordController:
-                            numberOfInternationalPasswordController,
-                        internationalPasswordValidityPeriodController:
-                            internationalPasswordValidityPeriodController),
+                    ...List.generate(
+                      touristFormKey.length,
+                      (index) => Column(children: [
+                        const SizedBox(height: 16),
+                        const GreyStripe(),
+                        const SizedBox(height: 16),
+                        _HeaderWithIconButton(
+                            text: 'Турист ${index + 1}',
+                            iconPath: 'assets/icons/collapse.svg'),
+                        const SizedBox(height: 16),
+                        _TouristForm(
+                            specialKey: touristFormKey[index],
+                            nameController: nameController[index],
+                            surnameController:
+                                surnameController[index],
+                            birthdayController:
+                                birthdayController[index],
+                            citizenshipController:
+                                citizenshipController[index],
+                            numberOfInternationalPasswordController:
+                                numberOfInternationalPasswordController[
+                                    index],
+                            internationalPasswordValidityPeriodController:
+                                internationalPasswordValidityPeriodController[
+                                    index]),
+                      ]),
+                    ),
                     const GreyStripe(),
                     const SizedBox(height: 24),
-                    const _HeaderWithIconButton(
-                        text: 'Добавить туриста',
-                        iconPath: 'assets/icons/add.svg'),
+                    _HeaderWithIconButton(
+                      text: 'Добавить туриста',
+                      iconPath: 'assets/icons/add.svg',
+                      onTap: () => setState(() => _addTouristForm()),
+                    ),
                     const SizedBox(height: 24),
                     const GreyStripe(),
                     const SizedBox(height: 16),
@@ -197,9 +217,17 @@ class _ReservationPageState extends State<ReservationPage> {
                           telephoneFormKey.currentState!.validate();
                       bool emailIsOk =
                           emailFormKey.currentState!.validate();
-                      bool touristFormIsOk =
-                          touristFormKey.currentState!.validate();
-                      (telephoneIsOk && emailIsOk && touristFormIsOk)
+                      List<bool> touristFormIsOk = [];
+                      for (int i = 0;
+                          i < touristFormKey.length;
+                          i++) {
+                        touristFormIsOk.add(touristFormKey[i]
+                            .currentState!
+                            .validate());
+                      }
+                      (telephoneIsOk &&
+                              emailIsOk &&
+                              !touristFormIsOk.contains(false))
                           ? context.go('/final',
                               extra: widget.hotelName)
                           : null;
@@ -212,6 +240,18 @@ class _ReservationPageState extends State<ReservationPage> {
         };
       },
     );
+  }
+
+  _addTouristForm() {
+    touristFormKey.add(GlobalKey<FormState>());
+    nameController.add(TextEditingController());
+    surnameController.add(TextEditingController());
+    birthdayController.add(TextEditingController());
+    citizenshipController.add(TextEditingController());
+    numberOfInternationalPasswordController
+        .add(TextEditingController());
+    internationalPasswordValidityPeriodController
+        .add(TextEditingController());
   }
 }
 
@@ -320,13 +360,18 @@ class _TouristForm extends StatelessWidget {
 class _HeaderWithIconButton extends StatelessWidget {
   final String text;
   final String iconPath;
+  final void Function()? onTap;
+
   const _HeaderWithIconButton(
-      {super.key, required this.text, required this.iconPath});
+      {super.key,
+      required this.text,
+      required this.iconPath,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -340,6 +385,7 @@ class _HeaderWithIconButton extends StatelessWidget {
                   image: Svg(iconPath),
                 ),
               ),
+              child: GestureDetector(onTap: onTap),
             ),
           ]),
     );
