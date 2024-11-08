@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:hotels/src/presentation_layer/pages/final_page/final_page.dart';
 import 'package:hotels/src/presentation_layer/pages/hotels/choose_hotel.dart';
 import 'package:hotels/src/presentation_layer/pages/reservation/reservation.dart';
 import 'package:hotels/src/presentation_layer/pages/rooms/choose_room.dart';
@@ -21,6 +22,12 @@ final GoRouter router = GoRouter(
         builder: (context, state) {
           String hotelName = state.extra as String;
           return Reservation(hotelName: hotelName);
+        }),
+    GoRoute(
+        path: "/final",
+        builder: (context, state) {
+          String hotelName = state.extra as String;
+          return FinalPage(hotelName: hotelName);
         }),
   ],
 );

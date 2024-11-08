@@ -44,3 +44,4 @@ flutter:
         - asset: fonts/SF-Pro-Display-Regular.otf
   assets:
     - assets/icons/
+    - assets/images/

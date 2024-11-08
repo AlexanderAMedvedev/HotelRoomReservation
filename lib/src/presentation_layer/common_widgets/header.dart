@@ -9,6 +9,8 @@ class Header extends StatelessWidget {
     final textTheme = Theme.of(context).textTheme;
     return Padding(
         padding: const EdgeInsets.only(left: 16),
-        child: Text(text, style: textTheme.displayMedium!.copyWith(color: Colors.black, fontWeight: FontWeight.w500)));
+        child: Text(text,
+            style: textTheme.displayLarge!
+                .copyWith(fontWeight: FontWeight.w600)));
   }
 }

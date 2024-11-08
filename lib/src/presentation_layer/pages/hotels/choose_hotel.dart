@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hotels/src/data_layer/models/hotel_entity.dart';
 import 'package:hotels/src/data_layer/repository/app_repository.dart';
 import 'package:hotels/src/di.dart';
 import 'package:hotels/src/presentation_layer/common_widgets/action_button.dart';
+import 'package:hotels/src/presentation_layer/common_widgets/address.dart';
 import 'package:hotels/src/presentation_layer/common_widgets/app_bar_title.dart';
 import 'package:hotels/src/presentation_layer/common_widgets/features.dart';
 import 'package:hotels/src/presentation_layer/common_widgets/grey_stripe.dart';
 import 'package:hotels/src/presentation_layer/common_widgets/header.dart';
+import 'package:hotels/src/presentation_layer/common_widgets/mark.dart';
 import 'package:hotels/src/presentation_layer/common_widgets/name.dart';
 import 'package:hotels/src/presentation_layer/common_widgets/page_view_with_dots_T.dart';
 import 'package:hotels/src/presentation_layer/common_widgets/price.dart';
@@ -52,8 +53,11 @@ class ChooseHotelPage extends StatelessWidget {
                         PageViewWithDots(
                             aboutTForIndex: aboutHotels[index]),
                         const SizedBox(height: 20),
-                        MarkWidget(
-                            aboutHotelsForIndex: aboutHotels[index]),
+                        Mark(
+                          rating:
+                              aboutHotels[index].rating.toString(),
+                          ratingName: aboutHotels[index].ratingName,
+                        ),
                         const SizedBox(height: 16),
                         Name(name: aboutHotels[index].name),
                         const SizedBox(height: 16),
@@ -176,54 +180,6 @@ class HotelDescription extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 16),
       child: Text(description,
           textAlign: TextAlign.left, style: textTheme.bodyMedium),
-    );
-  }
-}
-
-class Address extends StatelessWidget {
-  final String hotelAddress;
-  Address({super.key, required this.hotelAddress});
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return Padding(
-      padding: EdgeInsets.only(left: 16),
-      child: Text(
-        hotelAddress,
-        style: textTheme.titleMedium,
-        overflow: TextOverflow.ellipsis,
-        maxLines: 1,
-      ),
-    );
-  }
-}
-
-class MarkWidget extends StatelessWidget {
-  const MarkWidget({super.key, required this.aboutHotelsForIndex});
-  final HotelEntity aboutHotelsForIndex;
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme.displayMedium;
-    return Padding(
-      padding: const EdgeInsets.only(left: 16.0),
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8.0),
-            color: Colors.amberAccent),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(mainAxisSize: MainAxisSize.min, children: [
-            const Icon(Icons.star, color: Colors.orange),
-            const SizedBox(width: 3),
-            Text(aboutHotelsForIndex.rating.toString(),
-                style: textTheme),
-            const SizedBox(width: 3),
-            Text(aboutHotelsForIndex.ratingName, style: textTheme)
-          ]),
-        ),
-      ),
     );
   }
 }
