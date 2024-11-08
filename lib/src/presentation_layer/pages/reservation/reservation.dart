@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hotels/src/data_layer/models/reservation_entity.dart';
 import 'package:hotels/src/data_layer/repository/app_repository.dart';
@@ -34,9 +35,61 @@ class Reservation extends StatelessWidget {
   }
 }
 
-class ReservationPage extends StatelessWidget {
+class ReservationPage extends StatefulWidget {
   final String hotelName;
   const ReservationPage({super.key, required this.hotelName});
+
+  @override
+  State<ReservationPage> createState() => _ReservationPageState();
+}
+
+class _ReservationPageState extends State<ReservationPage> {
+  late GlobalKey<FormState> telephoneFormKey;
+  late TextEditingController telephoneController;
+
+  late GlobalKey<FormState> emailFormKey;
+  late TextEditingController emailController;
+
+  late GlobalKey<FormState> touristFormKey;
+  late TextEditingController nameController;
+  late TextEditingController surnameController;
+  late TextEditingController birthdayController;
+  late TextEditingController citizenshipController;
+  late TextEditingController numberOfInternationalPasswordController;
+  late TextEditingController
+      internationalPasswordValidityPeriodController;
+
+  @override
+  void initState() {
+    super.initState();
+    telephoneController = TextEditingController();
+    telephoneFormKey = GlobalKey<FormState>();
+
+    emailController = TextEditingController();
+    emailFormKey = GlobalKey<FormState>();
+
+    touristFormKey = GlobalKey<FormState>();
+    nameController = TextEditingController();
+    surnameController = TextEditingController();
+    birthdayController = TextEditingController();
+    citizenshipController = TextEditingController();
+    numberOfInternationalPasswordController = TextEditingController();
+    internationalPasswordValidityPeriodController =
+        TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    telephoneController.dispose();
+    emailController.dispose();
+    nameController.dispose();
+    surnameController.dispose();
+    birthdayController.dispose();
+    citizenshipController.dispose();
+    numberOfInternationalPasswordController.dispose();
+    internationalPasswordValidityPeriodController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +99,8 @@ class ReservationPage extends StatelessWidget {
           ReservationInitialState() => Scaffold(
               appBar: AppBar(
                 leading: BackIconButton(
-                    onTap: () =>
-                        context.go('/choose_room', extra: hotelName)),
+                    onTap: () => context.go('/choose_room',
+                        extra: widget.hotelName)),
                 title: const AppBarTitle('Бронирование'),
                 centerTitle: true,
               ),
@@ -57,8 +110,8 @@ class ReservationPage extends StatelessWidget {
             Scaffold(
               appBar: AppBar(
                 leading: BackIconButton(
-                    onTap: () =>
-                        context.go('/choose_room', extra: hotelName)),
+                    onTap: () => context.go('/choose_room',
+                        extra: widget.hotelName)),
                 title: const AppBarTitle('Бронирование'),
                 centerTitle: true,
               ),
@@ -87,16 +140,70 @@ class ReservationPage extends StatelessWidget {
                     const SizedBox(height: 16),
                     const Header(text: 'Информация о покупателе'),
                     const SizedBox(height: 16),
+                    _Form(
+                      specialKey: telephoneFormKey,
+                      controller: telephoneController,
+                      hintText: 'Номер телефона',
+                      validator: context
+                          .read<ReservationCubit>()
+                          .telephoneValidation,
+                    ),
+                    const SizedBox(height: 4),
+                    _Form(
+                      specialKey: emailFormKey,
+                      controller: emailController,
+                      hintText: 'Почта',
+                      validator: context
+                          .read<ReservationCubit>()
+                          .emailValidation,
+                      autoValidation: true,
+                    ),
+                    const SizedBox(height: 4),
+                    _ConcerningNumberAndEmail(
+                        'Эти данные никому не передаются. После оплаты мы вышлем чек на указанный Вами номер и почту'),
+                    const SizedBox(height: 16),
                     const GreyStripe(),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 16),
+                    const _HeaderWithIconButton(
+                        text: 'Первый турист',
+                        iconPath: 'assets/icons/collapse.svg'),
+                    const SizedBox(height: 16),
+                    _TouristForm(
+                        specialKey: touristFormKey,
+                        nameController: nameController,
+                        surnameController: surnameController,
+                        birthdayController: birthdayController,
+                        citizenshipController: citizenshipController,
+                        numberOfInternationalPasswordController:
+                            numberOfInternationalPasswordController,
+                        internationalPasswordValidityPeriodController:
+                            internationalPasswordValidityPeriodController),
+                    const GreyStripe(),
+                    const SizedBox(height: 24),
+                    const _HeaderWithIconButton(
+                        text: 'Добавить туриста',
+                        iconPath: 'assets/icons/add.svg'),
+                    const SizedBox(height: 24),
+                    const GreyStripe(),
+                    const SizedBox(height: 16),
                     _TableMoney(aboutReservation: aboutReservation),
                     const SizedBox(height: 28),
                     const GreyStripe(),
                     const SizedBox(height: 16),
                     ActionButton(
                         'Оплатить ${_totalPrice(aboutReservation).floor()} P',
-                        onTap: () =>
-                            context.go('/final', extra: hotelName)),
+                        onTap: () {
+                      bool telephoneIsOk =
+                          telephoneFormKey.currentState!.validate();
+                      bool emailIsOk =
+                          emailFormKey.currentState!.validate();
+                      bool touristFormIsOk =
+                          touristFormKey.currentState!.validate();
+                      (telephoneIsOk && emailIsOk && touristFormIsOk)
+                          ? context.go('/final',
+                              extra: widget.hotelName)
+                          : null;
+                    }),
                     const SizedBox(height: 16),
                   ],
                 ),
@@ -104,6 +211,200 @@ class ReservationPage extends StatelessWidget {
             ),
         };
       },
+    );
+  }
+}
+
+class _TouristForm extends StatelessWidget {
+  final GlobalKey<FormState> specialKey;
+  final TextEditingController nameController;
+  final TextEditingController surnameController;
+  final TextEditingController birthdayController;
+  final TextEditingController citizenshipController;
+  final TextEditingController numberOfInternationalPasswordController;
+  final TextEditingController
+      internationalPasswordValidityPeriodController;
+  const _TouristForm({
+    super.key,
+    required this.specialKey,
+    required this.nameController,
+    required this.surnameController,
+    required this.birthdayController,
+    required this.citizenshipController,
+    required this.numberOfInternationalPasswordController,
+    required this.internationalPasswordValidityPeriodController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final reservationCubit = context.read<ReservationCubit>();
+    final hintTextStyle = Theme.of(context)
+        .textTheme
+        .headlineSmall
+        ?.copyWith(fontSize: 20);
+    final textStyle = Theme.of(context)
+        .textTheme
+        .headlineSmall
+        ?.copyWith(fontSize: 20, color: Colors.black);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Form(
+        key: specialKey,
+        child: Column(children: [
+          TextFormField(
+            style: textStyle,
+            decoration: InputDecoration(
+              hintStyle: hintTextStyle,
+              hintText: 'Имя',
+            ),
+            validator: reservationCubit.touristDataValidator,
+            controller: nameController,
+          ),
+          const SizedBox(height: 4),
+          TextFormField(
+            style: textStyle,
+            decoration: InputDecoration(
+              hintStyle: hintTextStyle,
+              hintText: 'Фамилия',
+            ),
+            validator: reservationCubit.touristDataValidator,
+            controller: surnameController,
+          ),
+          const SizedBox(height: 4),
+          TextFormField(
+            style: textStyle,
+            decoration: InputDecoration(
+              hintStyle: hintTextStyle,
+              hintText: 'Дата рождения',
+            ),
+            validator: reservationCubit.touristDataValidator,
+            controller: birthdayController,
+          ),
+          const SizedBox(height: 4),
+          TextFormField(
+            style: textStyle,
+            decoration: InputDecoration(
+              hintStyle: hintTextStyle,
+              hintText: 'Гражданство',
+            ),
+            validator: reservationCubit.touristDataValidator,
+            controller: citizenshipController,
+          ),
+          const SizedBox(height: 4),
+          TextFormField(
+            style: textStyle,
+            decoration: InputDecoration(
+              hintStyle: hintTextStyle,
+              hintText: 'Номер загранпаспорта',
+            ),
+            validator: reservationCubit.touristDataValidator,
+            controller: numberOfInternationalPasswordController,
+          ),
+          const SizedBox(height: 4),
+          TextFormField(
+            style: textStyle,
+            decoration: InputDecoration(
+              hintStyle: hintTextStyle,
+              hintText: 'Срок действия загранпаспорта',
+            ),
+            validator: reservationCubit.touristDataValidator,
+            controller: internationalPasswordValidityPeriodController,
+          ),
+          const SizedBox(height: 4),
+        ]),
+      ),
+    );
+  }
+}
+
+class _HeaderWithIconButton extends StatelessWidget {
+  final String text;
+  final String iconPath;
+  const _HeaderWithIconButton(
+      {super.key, required this.text, required this.iconPath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Header(text: text),
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: Svg(iconPath),
+                ),
+              ),
+            ),
+          ]),
+    );
+  }
+}
+
+class _ConcerningNumberAndEmail extends StatelessWidget {
+  final String text;
+  const _ConcerningNumberAndEmail(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        child: Text(text,
+            style: Theme.of(context)
+                .textTheme
+                .headlineSmall
+                ?.copyWith(fontSize: 18)));
+  }
+}
+
+class _Form extends StatelessWidget {
+  final GlobalKey<FormState> specialKey;
+  final TextEditingController controller;
+  final String hintText;
+  final String? Function(String?) validator;
+  final bool autoValidation;
+
+  const _Form({
+    super.key,
+    required this.specialKey,
+    required this.controller,
+    required this.hintText,
+    required this.validator,
+    this.autoValidation = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hintTextStyle = Theme.of(context)
+        .textTheme
+        .headlineSmall
+        ?.copyWith(fontSize: 20);
+    final textStyle = Theme.of(context)
+        .textTheme
+        .headlineSmall
+        ?.copyWith(fontSize: 20, color: Colors.black);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Form(
+        key: specialKey,
+        child: TextFormField(
+          autovalidateMode: autoValidation
+              ? AutovalidateMode.onUserInteraction
+              : AutovalidateMode.disabled,
+          style: textStyle,
+          decoration: InputDecoration(
+            hintStyle: hintTextStyle,
+            hintText: hintText,
+          ),
+          validator: validator,
+          controller: controller,
+        ),
+      ),
     );
   }
 }
