@@ -4,6 +4,30 @@ part 'dto.freezed.dart';
 part 'dto.g.dart';
 
 @freezed
+class ReservationDto with _$ReservationDto {
+  const factory ReservationDto({
+    @JsonKey(name: 'arrival_country') required String arrivalCountry,
+    required String departure,
+    @JsonKey(name: 'fuel_charge') required double fuelCharge,
+    required double horating,
+    @JsonKey(name: 'hotel_address') required String hotelAddress,
+    @JsonKey(name: 'hotel_name') required String hotelName,
+    required int id,
+    @JsonKey(name: 'number_of_nights') required String numberOfNights,
+    required String nutrition,
+    @JsonKey(name: 'rating_name') required String ratingName,
+    required String room,
+    @JsonKey(name: 'service_charge') required double serviceCharge,
+    @JsonKey(name: 'tour_date_start') required String tourDateStart,
+    @JsonKey(name: 'tour_date_stop') required String tourDateStop,
+    @JsonKey(name: 'tour_price') required double tourPrice,
+  }) = _ReservationDto;
+
+  factory ReservationDto.fromJson(Map<String, dynamic> json) =>
+      _$ReservationDtoFromJson(json);
+}
+
+@freezed
 class RoomDto with _$RoomDto {
   const factory RoomDto({
     required int id,

@@ -6,17 +6,17 @@ class ReservationCubit extends Cubit<ReservationState> {
   ReservationCubit({required AppRepository appRepository})
       : _repository = appRepository,
         super(ReservationInitialState()) {
-    //onInit();
+    onInit();
   }
 
   final AppRepository _repository;
 
-  //Future<void> onInit() async {
-  //  try {
-  //    emit(HotelsDownloadedState(
-  //        aboutHotels: await _repository.getReservation()));
-  //  } catch (e, stackTrace) {
-  //    print('Error occured: $stackTrace');
-  //  }
-  // }
+  Future<void> onInit() async {
+    try {
+      emit(ReservationDownloadedState(
+          aboutReservation: await _repository.getReservation()));
+    } catch (e, stackTrace) {
+      print('Error occured: $stackTrace');
+    }
+  }
 }

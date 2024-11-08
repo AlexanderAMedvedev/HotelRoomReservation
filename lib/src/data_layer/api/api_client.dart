@@ -19,4 +19,7 @@ abstract class ApiClient {
 
   @GET('rooms')
   Future<List<RoomDto>> getAllRooms();
+
+  @GET('reservations')
+  Future<List<ReservationDto>> getReservations();
 }

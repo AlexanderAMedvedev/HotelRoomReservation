@@ -41,6 +41,17 @@ class ReservationPage extends StatelessWidget {
               ),
               body: const Center(child: CircularProgressIndicator()),
             ),
+          ReservationDownloadedState(:final aboutReservation) =>
+            Scaffold(
+              appBar: AppBar(
+                leading: BackIconButton(
+                    onTap: () =>
+                        context.go('/choose_room', extra: hotelName)),
+                title: const AppBarTitle('Бронирование'),
+                centerTitle: true,
+              ),
+              body: Center(child: Text(aboutReservation.nutrition)),
+            ),
         };
       },
     );
