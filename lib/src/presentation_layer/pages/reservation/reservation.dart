@@ -149,6 +149,7 @@ class _ReservationPageState extends State<ReservationPage> {
                     const Header(text: 'Информация о покупателе'),
                     const SizedBox(height: 16),
                     _Form(
+                      textInputType: TextInputType.phone,
                       specialKey: telephoneFormKey,
                       controller: telephoneController,
                       hintText: 'Номер телефона',
@@ -317,6 +318,7 @@ class _TouristForm extends StatelessWidget {
               hintStyle: hintTextStyle,
               hintText: 'Дата рождения',
             ),
+            keyboardType: TextInputType.datetime,
             validator: reservationCubit.touristDataValidator,
             controller: birthdayController,
           ),
@@ -347,6 +349,7 @@ class _TouristForm extends StatelessWidget {
               hintStyle: hintTextStyle,
               hintText: 'Срок действия загранпаспорта',
             ),
+            keyboardType: TextInputType.datetime,
             validator: reservationCubit.touristDataValidator,
             controller: internationalPasswordValidityPeriodController,
           ),
@@ -414,15 +417,16 @@ class _Form extends StatelessWidget {
   final String hintText;
   final String? Function(String?) validator;
   final bool autoValidation;
+  final TextInputType? textInputType;
 
-  const _Form({
-    super.key,
-    required this.specialKey,
-    required this.controller,
-    required this.hintText,
-    required this.validator,
-    this.autoValidation = false,
-  });
+  const _Form(
+      {super.key,
+      required this.specialKey,
+      required this.controller,
+      required this.hintText,
+      required this.validator,
+      this.autoValidation = false,
+      this.textInputType});
 
   @override
   Widget build(BuildContext context) {
@@ -439,6 +443,7 @@ class _Form extends StatelessWidget {
       child: Form(
         key: specialKey,
         child: TextFormField(
+          keyboardType: textInputType,
           autovalidateMode: autoValidation
               ? AutovalidateMode.onUserInteraction
               : AutovalidateMode.disabled,
