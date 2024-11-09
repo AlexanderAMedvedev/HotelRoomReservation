@@ -18,8 +18,13 @@ flutter packages pub run build_runner build
 
 ### Стек
 go_router
+
 dio
+
 retrofit
+
 get_it
+
 flutter_bloc (cubit достаточно в случае данной задачи)
+
 freezed
