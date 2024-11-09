@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
-final appTheme = ThemeData(textTheme: _textTheme());
+final appTheme = ThemeData(
+  scaffoldBackgroundColor: Colors.white,
+  textTheme: _textTheme(),
+  inputDecorationTheme: _inputDecorationTheme(),
+);
 
 TextTheme _textTheme() => const TextTheme(
       headlineMedium: TextStyle(
@@ -36,4 +40,18 @@ TextTheme _textTheme() => const TextTheme(
           fontFamily: 'SF-Pro-Display',
           fontSize: 18,
           color: Colors.black),
+    );
+
+_inputDecorationTheme() => InputDecorationTheme(
+      contentPadding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+      filled: true,
+      fillColor: Colors.grey[200],
+      enabledBorder: const OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.transparent),
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
+      errorBorder: const OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.red),
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+      ),
     );

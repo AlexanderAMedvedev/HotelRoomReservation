@@ -7,6 +7,6 @@ class GreyStripe extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     return Container(
-        width: size.width, height: 16, color: Colors.grey);
+        width: size.width, height: 16, color: Colors.grey[200]);
   }
 }
