@@ -15,3 +15,11 @@ Tools • Dart 3.5.4 • DevTools 2.37.3
 ```
 flutter packages pub run build_runner build
 ```
+
+### Стек
+go_router
+dio
+retrofit
+get_it
+flutter_bloc (cubit достаточно в случае данной задачи)
+freezed
